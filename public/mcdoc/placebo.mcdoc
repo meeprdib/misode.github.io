@@ -1,0 +1,68 @@
+use ::java::world::component::DataComponentPatch
+
+struct ChancedEffectInstance {
+    chance?: float,          // [Optional]  || Chance that this potion will be applied. 1.0 = 100% chance. Default value = 1.0.
+    effect: string,          // [Mandatory] || Registry name of the Effect to use.
+    amplifier?: StepFunction // [Optional]  || Range of possible amplifiers. The output of the function will be truncated to an integer. Default value = 0.
+    ambient?: boolean,       // [Optional]  || If this effect is marked as ambient. Default value = true.
+    visible?: boolean        // [Optional]  || If this effect is marked as visible. Default value = false.
+}
+
+struct CompoundTag {
+    Object  // [Mandatory] || Object representation of a Compound Tag, which is just write a JSON object that maps to your desired nbt.
+    |
+    string  // [Mandatory] || String representation of a Compound Tag -- See https://github.com/aramperes/Mojangson or https://minecraft.wiki/w/NBT_format#Conversion_to_SNBT for more information.
+}
+
+struct PlaceboItemStack {
+    id: string,                      // [Mandatory] || Registry name of the item to load.
+    optional?: boolean,              // [Optional]  || If this stack is optional, and will produce an empty stack instead of throwing an error when the item is not found. Default value = false.
+    count?: integer,                 // [Optional]  || Stack Size. Default value = 1.
+    components?: DataComponentPatch, // [Optional]  || Vanilla Item NBT. Default value = empty NBT.
+}
+
+struct WeightedItemStack {
+    stack: ItemStack,   // [Mandatory] || The stack being provided.
+    weight: integer     // [Mandatory] || Weight (relative to other weighted entries in the same list) of this object.
+    drop_chance?: float  // [Optional]  || Drop chance of this stack, if used in a context where it will be equipped by an entity. Default value = -1.
+}
+
+struct GearSet {
+    weight: integer,   // [Mandatory] || Weight (relative to other weighted entries in the same list) of this object.
+    quality?: float,   // [Optional]  || Quality of this object. Used when a luck level is present in the selection context. Default value = 0.
+    mainhands?: [      // [Optional]  || List of weighted stacks for the main hand. Default value = empty list.
+        WeightedItemStack
+    ],
+    offhands?: [       // [Optional]  || List of weighted stacks for the off hand. Default value = empty list.
+        WeightedItemStack
+    ],
+    helmets?: [        // [Optional]  || List of weighted stacks for the head slot. Default value = empty list.
+        WeightedItemStack
+    ],
+    chestplates?: [    // [Optional]  || List of weighted stacks for the chest slot. Default value = empty list.
+        WeightedItemStack
+    ],
+    leggings?: [       // [Optional]  || List of weighted stacks for the legs slot. Default value = empty list.
+        WeightedItemStack
+    ],
+    boots?: [          // [Optional]  || List of weighted stacks for the boots slot. Default value = empty list.
+        WeightedItemStack
+    ],
+    tags?: [           // [Optional]  || List of tags this gear set belongs to. Default value = empty list.
+        string
+    ]
+}
+
+struct StepFunction {
+    min: float,     // [Mandatory] || Minimum value of the output range.
+    steps: integer, // [Mandatory] || The total number of steps that the function has. Must be greater than or equal to one.
+    step: float     // [Mandatory] || The value that an individual step will increase the output by.
+} | float           // [Mandatory] || Encodes a constant value as a StepFunction.
+
+struct RandomAttributeModifier {
+    attribute: string,    // [Mandatory] || The registry name of the Attribute to modify.
+    operation: string,    // [Mandatory] || The operation of the modifier. One of "add_value", "add_multiplied_base", or "add_multiplied_total".
+    value: StepFunction,  // [Mandatory] || The value of the attribute modifier.
+    modifier_id: string   // [Mandatory] || A unique identifier for this attribute modifier. Only needs to be unique on a per-attribute basis.
+}
+
